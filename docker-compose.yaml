@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  socket-talk-db:               # PostgreSQL container for "Socket Talk"
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: socket-talk-password    # Change to a secure password
+      POSTGRES_DB: socket_talk       # DB name matches project
+    ports:
+      - "5432:5432"
+    volumes:
+      - socket-talk-db-data:/var/lib/postgresql/data
+    networks:
+      - socket-talk-net
+
+  # Optional: your Next.js + Socket.IO app as a service
+  socket-talk-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:changeme@socket-talk-db:5432/socket_talk
+      NEXT_PUBLIC_SOCKET_URL: http://socket-talk-app:3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - socket-talk-db
+    networks:
+      - socket-talk-net
+
+networks:
+  socket-talk-net:
+    driver: bridge
+
+volumes:
+  socket-talk-db-data:
