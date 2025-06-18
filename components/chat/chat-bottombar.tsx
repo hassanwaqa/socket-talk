@@ -27,8 +27,9 @@ const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
 		return (
 			<textarea
 				ref={ref}
+				rows={1}
 				className={cn(
-					"flex w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+					"w-full resize-none border border-input bg-background px-4 py-3 text-sm leading-[1.5rem] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
 					className
 				)}
 				{...props}
@@ -235,7 +236,7 @@ export default function ChatBottombar({ isMobile }: ChatBottombarProps) {
 						placeholder="Type a message..."
 						className="rounded-full"
 					/>
-					<div className="absolute right-4 bottom-2  ">
+					<div className="absolute right-4 bottom-3  ">
 						<EmojiPicker
 							onChange={(value: any) => {
 								setMessage(message + value);
