@@ -13,6 +13,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Message } from "../data";
+import { useEffect } from "react";
+import { subscribeToEvent } from "@/lib/socket/socketEvents";
+import { EVENTS } from "@/lib/socket/events";
+import { fetchNewUsers } from "@/lib/socket/SocketEmitCalls";
+import { useSession } from "next-auth/react";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -27,6 +32,19 @@ interface SidebarProps {
 }
 
 export function Sidebar({ chats, isCollapsed, isMobile }: SidebarProps) {
+	const { data: session, status } = useSession();
+
+	useEffect(() => {
+		fetchNewUsers({userId: session?.user?.id})
+		const unsubscribe = subscribeToEvent(EVENTS.NEW_USERS, (response: any) => {
+			console.log('response', response)
+		})
+
+		return () => {
+			unsubscribe();
+		}
+	}, [])
+
   return (
     <div
       data-collapsed={isCollapsed}

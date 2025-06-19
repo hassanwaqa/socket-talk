@@ -10,7 +10,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
 import { Chat } from "./chat";
-import { connectSocket } from "@/lib/socketManager";
+import { connectSocket, disconnectSocket } from "@/lib/socket/socketManager";
+import { setupSocketListeners } from "@/lib/socket/socketSetup";
 
 interface ChatLayoutProps {
 	defaultLayout: number[] | undefined;
@@ -29,6 +30,7 @@ export function ChatLayout({
 
 	useEffect(() => {
 		connectSocket();
+		setupSocketListeners();
 		const checkScreenWidth = () => {
 			setIsMobile(window.innerWidth <= 768);
 		};
@@ -42,6 +44,7 @@ export function ChatLayout({
 		// Cleanup the event listener on component unmount
 		return () => {
 			window.removeEventListener("resize", checkScreenWidth);
+      disconnectSocket();
 		};
 	}, []);
 
