@@ -43,7 +43,7 @@ export function Sidebar({ chats, isCollapsed, isMobile }: SidebarProps) {
 		return () => {
 			unsubscribe();
 		}
-	}, [])
+	}, [session?.user?.id])
 
   return (
     <div

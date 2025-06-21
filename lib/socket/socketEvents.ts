@@ -2,8 +2,8 @@ const eventListeners = new Map();
 
 export const handleIncomingSocketMessage = (response: any) => {
   console.log("response", response);
-  const { event, payload, requestId, status, error } = response;
-  if (status !== "success") {
+  const { event, payload, requestId, success, error } = response;
+  if (!success) {
     console.error(error || "An unexpected error occurred");
     return;
   }
