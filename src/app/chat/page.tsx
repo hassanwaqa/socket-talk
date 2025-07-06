@@ -20,6 +20,8 @@ export default function ChatRoom() {
     const currentUsername = useRef('');
     const router = useRouter();
     const searchParams = useSearchParams();
+    const roomMenuRef = useRef<HTMLDivElement>(null);
+    const userMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const initializeChat = async () => {
@@ -168,16 +170,6 @@ export default function ChatRoom() {
         }
     };
 
-    const handleDisconnect = () => {
-        // Leave room before disconnecting
-        if (hasJoinedRoom.current && roomId && username) {
-            socketManager.leaveRoom(roomId, username);
-            hasJoinedRoom.current = false;
-        }
-        socketManager.disconnect();
-        setIsConnected(false);
-    };
-
     const handleSignOut = () => {
         // Leave room before signing out
         if (hasJoinedRoom.current && roomId && username) {
@@ -190,7 +182,7 @@ export default function ChatRoom() {
     };
 
     const copyRoomUrl = () => {
-        const url = `${window.location.origin}/?roomId=${roomId}`;
+        const url = window.location.href;
         navigator.clipboard.writeText(url);
         alert('Room URL copied to clipboard!');
         setShowRoomMenu(false);
@@ -208,44 +200,59 @@ export default function ChatRoom() {
 
     // Close menus when clicking outside
     useEffect(() => {
-        const handleClickOutside = () => {
-            setShowUserMenu(false);
-            setShowRoomMenu(false);
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                roomMenuRef.current &&
+                !roomMenuRef.current.contains(event.target as Node) &&
+                userMenuRef.current &&
+                !userMenuRef.current.contains(event.target as Node)
+            ) {
+                setShowUserMenu(false);
+                setShowRoomMenu(false);
+            } else if (
+                roomMenuRef.current &&
+                !roomMenuRef.current.contains(event.target as Node)
+            ) {
+                setShowRoomMenu(false);
+            } else if (
+                userMenuRef.current &&
+                !userMenuRef.current.contains(event.target as Node)
+            ) {
+                setShowUserMenu(false);
+            }
         };
-
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     return (
-        <div className="min-h-screen bg-pink-100 flex flex-col">
-            {/* Top Navigation - Fixed */}
-            <div className="fixed top-0 left-0 right-0 bg-white shadow-sm border-b p-4 z-10">
-                <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <div className="min-h-screen bg-amber-50 flex flex-col" style={{ backgroundColor: '#fef7ed' }}>
+            {/* Top Navigation - Fixed Island */}
+            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-amber-100 shadow-lg border rounded-lg p-4 z-10 w-full max-w-4xl mx-4">
+                <div className="flex items-center justify-between">
                     {/* Room Info */}
                     <div className="flex items-center space-x-4">
-                        <div className="relative">
+                        <div className="relative" ref={roomMenuRef}>
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setShowRoomMenu(!showRoomMenu);
                                 }}
-                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                className="p-2 hover:bg-amber-200 rounded-full transition-colors"
                             >
                                 <MoreHorizontal className="w-5 h-5 text-gray-600" />
                             </button>
-
                             {showRoomMenu && (
-                                <div className="absolute top-full left-0 mt-2 bg-white border rounded-lg shadow-lg py-2 min-w-48 z-10">
+                                <div className="absolute top-full left-0 mt-2 bg-amber-50 border rounded-lg shadow-lg py-2 min-w-48 z-10">
                                     <button
                                         onClick={copyRoomUrl}
-                                        className="block w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
+                                        className="block w-full px-4 py-2 text-left text-amber-700 hover:bg-amber-100 text-sm"
                                     >
                                         Copy Room URL
                                     </button>
                                     <button
                                         onClick={handleChangeRoom}
-                                        className="block w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
+                                        className="block w-full px-4 py-2 text-left text-amber-700 hover:bg-amber-100 text-sm"
                                     >
                                         Change Room
                                     </button>
@@ -260,30 +267,26 @@ export default function ChatRoom() {
                     </div>
 
                     {/* User Menu */}
-                    <div className="relative">
+                    <div className="relative" ref={userMenuRef}>
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setShowUserMenu(!showUserMenu);
                             }}
-                            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                            className="p-2 hover:bg-amber-200 rounded-full transition-colors"
                         >
                             <User className="w-5 h-5 text-gray-600" />
                         </button>
-
                         {showUserMenu && (
-                            <div className="absolute top-full right-0 mt-2 bg-white border rounded-lg shadow-lg py-2 min-w-32 z-10">
+                            <div className="absolute top-full right-0 mt-2 bg-amber-50 border rounded-lg shadow-lg py-2 min-w-40 z-10">
+                                <div className="px-4 py-2 text-sm text-amber-800 border-b">
+                                    {username}
+                                </div>
                                 <button
                                     onClick={handleSignOut}
-                                    className="block w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
+                                    className="block w-full px-4 py-3 text-left text-amber-700 hover:bg-amber-100 text-sm"
                                 >
                                     Sign Out
-                                </button>
-                                <button
-                                    onClick={handleDisconnect}
-                                    className="block w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
-                                >
-                                    Disconnect
                                 </button>
                             </div>
                         )}
@@ -292,9 +295,9 @@ export default function ChatRoom() {
             </div>
 
             {/* Messages Area - Scrollable */}
-            <div className="flex-1 pt-20 pb-21 overflow-hidden">
+            <div className="flex-1 pt-24 pb-21 overflow-hidden bg-amber-50">
                 <div className="max-w-4xl mx-auto h-full p-4 flex flex-col">
-                    <div className="flex-1 overflow-y-auto">
+                    <div className="flex-1 overflow-y-auto bg-amber-50">
                         <div className="space-y-4">
                             {messages.length === 0 && (
                                 <div className="text-center text-gray-500 py-8">
@@ -308,14 +311,14 @@ export default function ChatRoom() {
                                     className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.isOwn
-                                        ? 'bg-red-500 text-white'
-                                        : 'bg-white text-gray-800 border'
+                                        ? 'bg-amber-600 text-white'
+                                        : 'bg-white text-gray-800 border border-amber-200'
                                         }`}>
                                         {!message.isOwn && (
                                             <div className="text-xs text-gray-500 mb-1">{message.username}</div>
                                         )}
                                         <div className="text-sm">{message.content}</div>
-                                        <div className={`text-xs mt-1 ${message.isOwn ? 'text-red-100' : 'text-gray-400'
+                                        <div className={`text-xs mt-1 ${message.isOwn ? 'text-amber-100' : 'text-gray-400'
                                             }`}>
                                             {message.timestamp}
                                         </div>
@@ -329,7 +332,7 @@ export default function ChatRoom() {
             </div>
 
             {/* Message Input - Fixed */}
-            <div className="fixed bottom-4 left-0 right-0 bg-pink-100 p-4">
+            <div className="fixed bottom-4 left-0 right-0 bg-amber-50 p-4">
                 <div className="max-w-4xl mx-auto">
                     <form onSubmit={handleSendMessage} className="flex gap-2">
                         <input
@@ -337,13 +340,13 @@ export default function ChatRoom() {
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                             placeholder="Message"
-                            className={`flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-800 placeholder-gray-400 ${!isConnected ? 'opacity-50' : ''}`}
+                            className={`flex-1 px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-800 placeholder-gray-400 ${!isConnected ? 'opacity-50' : ''}`}
                             disabled={!isConnected}
                         />
                         <button
                             type="submit"
                             disabled={!isConnected || !newMessage.trim()}
-                            className={`px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium ${(!isConnected || !newMessage.trim()) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-medium ${(!isConnected || !newMessage.trim()) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             Send
                         </button>
@@ -353,14 +356,14 @@ export default function ChatRoom() {
 
             {/* Connection Status */}
             {!isConnected && (
-                <div className="fixed bottom-20 left-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-20">
+                <div className="fixed bottom-20 left-4 bg-amber-600 text-white px-4 py-2 rounded-lg shadow-lg z-20">
                     Disconnected
                 </div>
             )}
 
             {/* Footer */}
-            <div className="fixed bottom-0 left-0 right-0 text-center py-1 text-xs text-gray-500 bg-pink-100">
-                Powered by <span className="text-red-500 font-medium">Socket Talk</span>
+            <div className="fixed bottom-0 left-0 right-0 text-center py-1 text-xs text-gray-500 bg-amber-50">
+                Powered by <span className="text-amber-600 font-medium">Socket Talk</span>
             </div>
         </div>
     );
