@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
-// Secret key for JWT verification (same as login)
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-
 export async function POST(request: NextRequest) {
     try {
         const { token } = await request.json();
@@ -16,8 +13,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Verify JWT token
-        const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+        // Verify JWT token using the same secret as login
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as jwt.JwtPayload;
 
         // Check if token is expired (additional check)
         if (decoded.exp && decoded.exp * 1000 < Date.now()) {

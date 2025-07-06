@@ -28,34 +28,40 @@ export interface VerifyResponse {
 
 export const SESSION_KEY = 'chatSession';
 
-// API call to login and get JWT token
-export async function loginWithUsername(username: string): Promise<LoginResponse> {
+// Login with username and get JWT token
+export async function loginWithUsername(username: string, roomId?: string): Promise<{
+    success: boolean;
+    token?: string;
+    user?: { username: string };
+    roomId?: string;
+    expiresAt?: number;
+    error?: string;
+}> {
     try {
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username }),
+            body: JSON.stringify({ username, roomId }),
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || 'Login failed');
+            return { success: false, error: data.error };
         }
 
-        return data;
+        return {
+            success: true,
+            token: data.token,
+            user: data.user,
+            roomId: data.roomId,
+            expiresAt: data.expiresAt,
+        };
     } catch (error) {
         console.error('Login error:', error);
-        return {
-            success: false,
-            token: '',
-            user: { username: '' },
-            roomId: '',
-            expiresAt: 0,
-            error: error instanceof Error ? error.message : 'Login failed',
-        };
+        return { success: false, error: 'Network error' };
     }
 }
 

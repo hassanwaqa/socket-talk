@@ -29,7 +29,9 @@ export default function ChatRoom() {
             // Check for valid session with JWT verification
             const session = await getSession();
             if (!session) {
-                router.push('/');
+                // Redirect to login with the current URL as redirect parameter
+                const currentUrl = `${window.location.pathname}${window.location.search}`;
+                router.push(`/?redirect=${encodeURIComponent(currentUrl)}`);
                 return;
             }
 

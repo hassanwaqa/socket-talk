@@ -15,15 +15,23 @@ export default function HomePage() {
 
   useEffect(() => {
     const roomId = searchParams.get('roomId');
+    const redirectUrl = searchParams.get('redirect');
     const session = getSessionSync();
 
-    if (roomId && session) {
-      // User has valid session and roomId, redirect to chat
-      router.push(`/chat?roomId=${roomId}`);
-      return;
+    if (session) {
+      // User is already logged in
+      if (redirectUrl) {
+        // Redirect to the original URL they wanted to visit
+        router.push(redirectUrl);
+        return;
+      } else if (roomId) {
+        // Redirect to chat with roomId
+        router.push(`/chat?roomId=${roomId}`);
+        return;
+      }
     }
 
-    // No roomId or no session, show login
+    // No session or no redirect, show login
     setInitializing(false);
   }, [searchParams, router]);
 
@@ -35,15 +43,24 @@ export default function HomePage() {
     setError('');
 
     try {
+      // Get roomId and redirect URL from URL parameters
+      const originalRoomId = searchParams.get('roomId');
+      const redirectUrl = searchParams.get('redirect');
+
       // Call login API to get JWT token and roomId
-      const result = await loginWithUsername(username);
+      const result = await loginWithUsername(username, originalRoomId || undefined);
 
       if (result.success) {
         // Create session with JWT token and roomId
-        createSession(result.token, result.user.username, result.roomId, result.expiresAt);
+        createSession(result.token!, result.user!.username, result.roomId!, result.expiresAt!);
 
-        // Redirect to chat with roomId parameter
-        router.push(`/chat?roomId=${result.roomId}`);
+        // Redirect to the original URL if present, otherwise to chat with roomId
+        if (redirectUrl) {
+          router.push(redirectUrl);
+        } else {
+          const targetRoomId = originalRoomId || result.roomId;
+          router.push(`/chat?roomId=${targetRoomId}`);
+        }
       } else {
         setError(result.error || 'Login failed');
       }
