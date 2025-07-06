@@ -44,25 +44,6 @@ export default function ChatRoom() {
             setRoomId(targetRoomId);
             currentRoomId.current = targetRoomId;
             currentUsername.current = session.username;
-
-            // Add demo messages for visualization
-            const demoMessages: Message[] = [
-                {
-                    id: '1',
-                    username: 'ali.raza',
-                    content: 'hello i am ali',
-                    timestamp: '14:39',
-                    isOwn: false,
-                },
-                {
-                    id: '2',
-                    username: session.username,
-                    content: 'hello',
-                    timestamp: '14:39',
-                    isOwn: true,
-                },
-            ];
-            setMessages(demoMessages);
         };
 
         initializeChat();
