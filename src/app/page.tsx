@@ -74,14 +74,14 @@ export default function HomePage() {
 
   if (initializing) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-pink-100 flex items-center justify-center">
+      <div className="min-h-screen bg-pink-100 flex items-center justify-center">
         <div className="text-gray-600">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-pink-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-pink-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full text-center">
         {/* Dice Icon */}
         <div className="mb-8 flex justify-center">
@@ -95,7 +95,7 @@ export default function HomePage() {
 
         {/* Welcome Text */}
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to</h1>
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">AnyCable demo!</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-6">Socket Talk !</h2>
 
         <div className="text-gray-600 mb-8 space-y-1">
           <p>Before joining a room please set up a username.</p>
@@ -134,7 +134,7 @@ export default function HomePage() {
 
         {/* Footer */}
         <div className="mt-16 text-sm text-gray-500">
-          Powered by <span className="text-red-500 font-medium">AnyCable</span>
+          Powered by <span className="text-red-500 font-medium">Socket Talk</span>
         </div>
       </div>
     </div>
