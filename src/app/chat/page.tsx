@@ -81,10 +81,28 @@ export default function ChatRoom() {
             }
         };
 
+        const handleMessageHistory = (data: { roomId: string; messages: Array<{ content: string; username: string; timestamp: string; isOwn: boolean }> }) => {
+            // Only process history for the current room
+            if (data.roomId === currentRoomId.current) {
+                // Convert backend message format to frontend Message format
+                const historyMessages: Message[] = data.messages.map((msg, index) => ({
+                    id: `history-${index}-${Date.now()}`,
+                    username: msg.username,
+                    content: msg.content,
+                    timestamp: msg.timestamp,
+                    isOwn: msg.isOwn
+                }));
+
+                // Replace current messages with history
+                setMessages(historyMessages);
+            }
+        };
+
         // Add event listeners
         socketManager.on('connect', handleConnect);
         socketManager.on('disconnect', handleDisconnect);
         socketManager.on('message', handleMessage);
+        socketManager.on('message-history', handleMessageHistory);
 
         // Handle user leaving on page unload
         const handleBeforeUnload = () => {
@@ -104,6 +122,7 @@ export default function ChatRoom() {
             socketManager.off('connect', handleConnect);
             socketManager.off('disconnect', handleDisconnect);
             socketManager.off('message', handleMessage);
+            socketManager.off('message-history', handleMessageHistory);
 
             // Leave room when component unmounts
             if (hasJoinedRoom.current && currentRoomId.current && currentUsername.current) {

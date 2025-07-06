@@ -12,6 +12,7 @@ export interface SocketEvents {
     connect: () => void;
     disconnect: () => void;
     message: (message: Message) => void;
+    'message-history': (data: { roomId: string; messages: Array<{ content: string; username: string; timestamp: string; isOwn: boolean }> }) => void;
     'user-joined': (data: { username: string }) => void;
     'user-left': (data: { username: string }) => void;
 }
@@ -43,6 +44,10 @@ class SocketManager {
 
         this.socket.on('message', (message: Message) => {
             this.emit('message', message);
+        });
+
+        this.socket.on('message-history', (data: { roomId: string; messages: Array<{ content: string; username: string; timestamp: string; isOwn: boolean }> }) => {
+            this.emit('message-history', data);
         });
 
         this.socket.on('user-joined', (data: { username: string }) => {
