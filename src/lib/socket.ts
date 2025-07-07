@@ -21,7 +21,7 @@ class SocketManager {
     private socket: Socket | null = null;
     private listeners: Map<string, ((...args: unknown[]) => void)[]> = new Map();
 
-    connect(url: string = 'http://localhost:4000'): Socket {
+    connect(url: string = process.env.NEXT_PUBLIC_SOCKET_URL || ""): Socket {
         if (this.socket?.connected) {
             return this.socket;
         }

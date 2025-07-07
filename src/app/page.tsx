@@ -99,8 +99,6 @@ export default function HomePage() {
 
         <div className="text-gray-600 mb-8 space-y-1">
           <p>Before joining a room please set up a username.</p>
-          <p>You can also enter your email to see your</p>
-          <p>Gravatar near your messages!</p>
         </div>
 
         {/* Error Message */}
