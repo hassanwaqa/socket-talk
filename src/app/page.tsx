@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Dice1 } from 'lucide-react';
 import { loginWithUsername, createSession, getSessionSync } from '@/lib/session';
 
-export default function HomePage() {
+function HomePageContent() {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -99,6 +99,8 @@ export default function HomePage() {
 
         <div className="text-gray-600 mb-8 space-y-1">
           <p>Before joining a room please set up a username.</p>
+          <p>You can also enter your email to see your</p>
+          <p>Gravatar near your messages!</p>
         </div>
 
         {/* Error Message */}
@@ -136,5 +138,17 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    }>
+      <HomePageContent />
+    </Suspense>
   );
 }

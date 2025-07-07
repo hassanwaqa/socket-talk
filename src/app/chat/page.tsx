@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { MoreHorizontal, User } from 'lucide-react';
 import { getSession, clearSession } from '@/lib/session';
 import { socketManager, Message } from '@/lib/socket';
 
-export default function ChatRoom() {
+function ChatRoomContent() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [isConnected, setIsConnected] = useState(false);
@@ -18,26 +18,22 @@ export default function ChatRoom() {
     const hasJoinedRoom = useRef(false);
     const currentRoomId = useRef('');
     const currentUsername = useRef('');
-    const router = useRouter();
-    const searchParams = useSearchParams();
     const roomMenuRef = useRef<HTMLDivElement>(null);
     const userMenuRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         const initializeChat = async () => {
-            // Get roomId from URL parameters
             const urlRoomId = searchParams.get('roomId');
 
-            // Check for valid session with JWT verification
             const session = await getSession();
             if (!session) {
-                // Redirect to login with the current URL as redirect parameter
                 const currentUrl = `${window.location.pathname}${window.location.search}`;
                 router.push(`/?redirect=${encodeURIComponent(currentUrl)}`);
                 return;
             }
 
-            // Verify roomId matches session or use URL roomId
             const targetRoomId = urlRoomId || session.roomId;
             if (!targetRoomId) {
                 router.push('/');
@@ -366,5 +362,17 @@ export default function ChatRoom() {
                 Powered by <span className="text-amber-600 font-medium">Socket Talk</span>
             </div>
         </div>
+    );
+}
+
+export default function ChatRoom() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+                <div className="text-gray-600">Loading...</div>
+            </div>
+        }>
+            <ChatRoomContent />
+        </Suspense>
     );
 } 
