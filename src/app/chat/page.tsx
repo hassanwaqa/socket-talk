@@ -262,30 +262,38 @@ function ChatRoomContent() {
                         </div>
                     </div>
 
-                    {/* User Menu */}
-                    <div className="relative" ref={userMenuRef}>
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowUserMenu(!showUserMenu);
-                            }}
-                            className="p-2 hover:bg-amber-200 rounded-full transition-colors"
-                        >
-                            <User className="w-5 h-5 text-gray-600" />
-                        </button>
-                        {showUserMenu && (
-                            <div className="absolute top-full right-0 mt-2 bg-amber-50 border rounded-lg shadow-lg py-2 min-w-40 z-10">
-                                <div className="px-4 py-2 text-sm text-amber-800 border-b">
-                                    {username}
-                                </div>
-                                <button
-                                    onClick={handleSignOut}
-                                    className="block w-full px-4 py-3 text-left text-amber-700 hover:bg-amber-100 text-sm"
-                                >
-                                    Sign Out
-                                </button>
+                    {/* User Info and Menu */}
+                    <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                            <div className="font-semibold text-gray-800 font-mono text-md">{username}</div>
+                            <div className="flex items-center justify-end space-x-2 text-xs">
+                                <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                                <span className={isConnected ? 'text-green-600' : 'text-gray-500'}>
+                                    {isConnected ? 'Connected' : 'Disconnected'}
+                                </span>
                             </div>
-                        )}
+                        </div>
+                        <div className="relative" ref={userMenuRef}>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowUserMenu(!showUserMenu);
+                                }}
+                                className="p-2 hover:bg-amber-200 rounded-full transition-colors"
+                            >
+                                <User className="w-5 h-5 text-gray-600" />
+                            </button>
+                            {showUserMenu && (
+                                <div className="absolute top-full right-0 mt-2 bg-amber-50 border rounded-lg shadow-lg py-2 min-w-40 z-10">
+                                    <button
+                                        onClick={handleSignOut}
+                                        className="block w-full px-4 py-3 text-left text-amber-700 hover:bg-amber-100 text-sm"
+                                    >
+                                        Sign Out
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -321,8 +329,8 @@ function ChatRoomContent() {
                                     </div>
                                 </div>
                             ))}
+                            <div ref={messagesEndRef} />
                         </div>
-                        <div ref={messagesEndRef} />
                     </div>
                 </div>
             </div>
@@ -349,13 +357,6 @@ function ChatRoomContent() {
                     </form>
                 </div>
             </div>
-
-            {/* Connection Status */}
-            {!isConnected && (
-                <div className="fixed bottom-20 left-4 bg-amber-600 text-white px-4 py-2 rounded-lg shadow-lg z-20">
-                    Disconnected
-                </div>
-            )}
 
             {/* Footer */}
             <div className="fixed bottom-0 left-0 right-0 text-center py-1 text-xs text-gray-500 bg-amber-50">
