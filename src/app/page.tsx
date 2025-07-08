@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Dice1 } from 'lucide-react';
+import { Cable } from 'lucide-react';
 import { loginWithUsername, createSession, getSessionSync } from '@/lib/session';
 
 function HomePageContent() {
@@ -83,19 +83,12 @@ function HomePageContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full text-center">
-        {/* Dice Icon */}
-        <div className="mb-8 flex justify-center">
-          <div className="relative">
-            <Dice1 className="w-16 h-16 text-amber-600" />
-            <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-amber-800 rounded-full flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-            </div>
-          </div>
-        </div>
+        {/* Plug Icon */}
+        <Cable size={100} className={"text-amber-600 mb-8 text-center inline-block"} />
 
         {/* Welcome Text */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to</h1>
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Socket Talk!</h2>
+        <h1 className="text-3xl font-mono font-bold text-gray-800 mb-2">Welcome to</h1>
+        <h2 className="text-3xl font-mono font-bold text-gray-800 mb-6">Socket Talk!</h2>
 
         <div className="text-gray-600 mb-8 space-y-1">
           <p>Before joining a room please set up a username.</p>
