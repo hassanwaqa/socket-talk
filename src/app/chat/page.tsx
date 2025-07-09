@@ -224,19 +224,19 @@ function ChatRoomContent() {
     return (
         <div className="min-h-screen bg-amber-50 flex flex-col" style={{ backgroundColor: '#fef7ed' }}>
             {/* Top Navigation - Fixed Island */}
-            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-amber-100 shadow-lg border rounded-lg p-4 z-10 w-full max-w-4xl mx-4">
+            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-amber-100 shadow-lg border rounded-lg p-3 sm:p-4 z-10 w-[calc(100%-2rem)] sm:w-full max-w-4xl">
                 <div className="flex items-center justify-between">
                     {/* Room Info */}
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
                         <div className="relative" ref={roomMenuRef}>
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setShowRoomMenu(!showRoomMenu);
                                 }}
-                                className="p-2 hover:bg-amber-200 rounded-full transition-colors"
+                                className="p-1.5 sm:p-2 hover:bg-amber-200 rounded-full transition-colors flex-shrink-0"
                             >
-                                <MoreHorizontal className="w-5 h-5 text-gray-600" />
+                                <MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                             </button>
                             {showRoomMenu && (
                                 <div className="absolute top-full left-0 mt-2 bg-amber-50 border rounded-lg shadow-lg py-2 min-w-48 z-10">
@@ -256,15 +256,15 @@ function ChatRoomContent() {
                             )}
                         </div>
 
-                        <div>
-                            <div className="text-xs text-gray-500 uppercase">Room</div>
-                            <div className="font-semibold text-gray-800">{roomId}</div>
+                        <div className="min-w-0 flex-1">
+                            <div className="text-xs text-gray-500 uppercase hidden sm:block">Room</div>
+                            <div className="font-semibold text-gray-800 text-sm sm:text-base truncate">{`${roomId.trim().substring(0, 8)}...`}</div>
                         </div>
                     </div>
 
                     {/* User Info and Menu */}
-                    <div className="flex items-center space-x-4">
-                        <div className="text-right">
+                    <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+                        <div className="text-right hidden sm:block">
                             <div className="font-semibold text-gray-800 font-mono text-md">{username}</div>
                             <div className="flex items-center justify-end space-x-2 text-xs">
                                 <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`}></span>
@@ -273,15 +273,25 @@ function ChatRoomContent() {
                                 </span>
                             </div>
                         </div>
+                        
+                        {/* Mobile User Info - Condensed */}
+                        <div className="text-right sm:hidden">
+                            <div className="font-semibold text-gray-800 font-mono text-sm truncate max-w-40">{username}</div>
+                            <div className="flex items-center justify-end space-x-1 font-mono text-gray-800 text-sm">
+                                <span className={`h-1.5 w-1.5 rounded-full mr-1 ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                                 {isConnected ? 'Connected' : 'Disconnected'}
+                            </div>
+                        </div>
+                        
                         <div className="relative" ref={userMenuRef}>
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setShowUserMenu(!showUserMenu);
                                 }}
-                                className="p-2 hover:bg-amber-200 rounded-full transition-colors"
+                                className="p-1.5 sm:p-2 hover:bg-amber-200 rounded-full transition-colors flex-shrink-0"
                             >
-                                <User className="w-5 h-5 text-gray-600" />
+                                <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                             </button>
                             {showUserMenu && (
                                 <div className="absolute top-full right-0 mt-2 bg-amber-50 border rounded-lg shadow-lg py-2 min-w-40 z-10">
